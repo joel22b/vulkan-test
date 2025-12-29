@@ -32,11 +32,15 @@ int main(int argc, char* argv[])
 
 	VulkanEngine engine;
 
-	engine.init(logger);	
+	if (!engine.init(logger))
+    {
+        logger->critical("Vulkan Engine failed to initialize");
+        return EXIT_FAILURE;
+    }	
 	
 	engine.run();	
 
 	engine.cleanup();
 
-	return 0;
+	return EXIT_SUCCESS;
 }
