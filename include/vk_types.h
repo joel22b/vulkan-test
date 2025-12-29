@@ -22,7 +22,7 @@
     do {                                                                \
         VkResult err = x;                                               \
         if (err) {                                                      \
-            spdlog::get("vulkan-test")->error("Detected Vulkan error: {}", string_VkResult(err)); \
+            spdlog::get("vulkan-test")->critical("Detected Vulkan error: [{}] on {}:{}", string_VkResult(err), __FILE__, __LINE__); \
             abort();                                                    \
         }                                                               \
     } while (0)

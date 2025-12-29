@@ -42,5 +42,6 @@ int main(int argc, char* argv[])
 
 	engine.cleanup();
 
+    logger->debug("Cleanly shutdown");
 	return EXIT_SUCCESS;
 }
