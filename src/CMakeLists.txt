@@ -16,8 +16,8 @@ target_include_directories(vulkan-test PRIVATE
 
 target_link_libraries(vulkan-test PRIVATE 
     glm::glm
-    SDL3
-    ImGui
+    SDL3::SDL3
+    #ImGui
     tinyobjloader
     vk-bootstrap
     GPUOpen::VulkanMemoryAllocator

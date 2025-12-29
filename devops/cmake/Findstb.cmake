@@ -13,7 +13,7 @@ if(NOT stb_POPULATED)
     FetchContent_Populate(stb)
 
     if (NOT DEFINED stb_INCLUDE_DIR)
-        message(WARNING "stb_INCLUDE_DIR not defined, redefining it")
+        message(STATUS "stb_INCLUDE_DIR not defined, redefining it")
         set(stb_INCLUDE_DIR "${stb_SOURCE_DIR}")
     endif()
 
