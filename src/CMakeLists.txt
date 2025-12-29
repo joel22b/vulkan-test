@@ -9,7 +9,7 @@ add_executable(vulkan-test
 
 target_include_directories(vulkan-test PRIVATE 
     ${GIT_REPO_BASE}/include
-    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${Vulkan_INCLUDE_DIR}
     ${stb_INCLUDE_DIR}
 )

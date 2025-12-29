@@ -2,7 +2,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-//#include <vk_engine.h>
+#include <vk_engine.h>
 
 int main(int argc, char* argv[])
 {
@@ -30,13 +30,13 @@ int main(int argc, char* argv[])
         logger->debug("Logger created successfully");
     }
 
-	/*VulkanEngine engine;
+	VulkanEngine engine;
 
-	engine.init();	
+	engine.init(logger);	
 	
 	engine.run();	
 
-	engine.cleanup();*/
+	engine.cleanup();
 
 	return 0;
 }
