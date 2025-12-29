@@ -3,7 +3,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 
-//#include <vk_initializers.h>
+#include <vk_initializers.h>
 #include <vk_types.h>
 
 #include <VkBootstrap.h>
@@ -80,6 +80,13 @@ VulkanEngine::cleanup()
 
     if (_isInitialized)
     {
+        //make sure the gpu has stopped doing its things
+		vkDeviceWaitIdle(_device);
+
+		for (int i = 0; i < FRAME_OVERLAP; i++) {
+			vkDestroyCommandPool(_device, _frames[i]._commandPool, nullptr);
+		}
+        
         destroy_swapchain();
 
 		vkDestroySurfaceKHR(_instance, _surface, nullptr);
@@ -256,6 +263,11 @@ VulkanEngine::init_vulkan()
             std::string(gpuProperties.deviceName));
     }
 
+    // use vkbootstrap to get a Graphics queue
+	_graphicsQueue = vkbDevice_ret.value().get_queue(vkb::QueueType::graphics).value();
+	_graphicsQueueFamily = vkbDevice_ret.value().get_queue_index(vkb::QueueType::graphics).value();
+    m_logger->debug("Using GPU queue family: {}", _graphicsQueueFamily);
+
     // Everything was successful
     return true;
 }
@@ -269,7 +281,19 @@ VulkanEngine::init_swapchain()
 void
 VulkanEngine::init_commands()
 {
-    //nothing yet
+    // Create a command pool for commands submitted to the graphics queue.
+	// We also want the pool to allow for resetting of individual command buffers
+	VkCommandPoolCreateInfo commandPoolInfo = vkinit::command_pool_create_info(_graphicsQueueFamily, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
+
+	for (int i = 0; i < FRAME_OVERLAP; i++) {
+
+		VK_CHECK(vkCreateCommandPool(_device, &commandPoolInfo, nullptr, &_frames[i]._commandPool));
+
+		// allocate the default command buffer that we will use for rendering
+		VkCommandBufferAllocateInfo cmdAllocInfo = vkinit::command_buffer_allocate_info(_frames[i]._commandPool, 1);
+
+		VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo, &_frames[i]._mainCommandBuffer));
+	}
 }
 
 void

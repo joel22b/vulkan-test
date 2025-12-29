@@ -2,6 +2,16 @@
 
 #include <vk_types.h>
 
+struct FrameData {
+
+	VkCommandPool _commandPool;
+	VkCommandBuffer _mainCommandBuffer;
+};
+
+// Double buffering so we can prepare the next frame
+// while the GPU is rendering the current frame
+constexpr unsigned int FRAME_OVERLAP = 2;
+
 class VulkanEngine
 {
 public:
@@ -30,6 +40,13 @@ public:
 	std::vector<VkImage> _swapchainImages;
 	std::vector<VkImageView> _swapchainImageViews;
 	VkExtent2D _swapchainExtent;
+
+    // Frame and Vulkan Command objects
+    FrameData _frames[FRAME_OVERLAP]; // Should not be accessed directly outside init logic, use get_current_frame()
+	FrameData& get_current_frame() { return _frames[_frameNumber % FRAME_OVERLAP]; };
+
+	VkQueue _graphicsQueue;
+	uint32_t _graphicsQueueFamily;
 
     // Acts like singleton but allows up to control creation and deletion
 	static VulkanEngine& Get();
