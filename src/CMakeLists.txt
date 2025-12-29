@@ -1,0 +1,26 @@
+#######################################################
+# Get all source files
+#######################################################
+file(GLOB_RECURSE ALL_SOURCE_FILES "*.cpp")
+
+add_executable(vulkan-test
+    ${ALL_SOURCE_FILES}
+)
+
+target_include_directories(vulkan-test PRIVATE 
+    ${GIT_REPO_BASE}/include
+    ${CMAKE_SOURCE_DIR}
+    ${Vulkan_INCLUDE_DIR}
+    ${stb_INCLUDE_DIR}
+)
+
+target_link_libraries(vulkan-test PRIVATE 
+    glm::glm
+    SDL3
+    ImGui
+    tinyobjloader
+    vk-bootstrap
+    GPUOpen::VulkanMemoryAllocator
+    spdlog::spdlog
+    ${Vulkan_LIBRARY}
+)
