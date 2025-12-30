@@ -4,13 +4,32 @@
 #include <deletion_queue.h>
 #include <vk_descriptors.h>
 
-struct FrameData {
+struct FrameData
+{
 
 	VkCommandPool _commandPool;
 	VkCommandBuffer _mainCommandBuffer;
     VkSemaphore _swapchainSemaphore;
 	VkFence _renderFence;
 	DeletionQueue _deletionQueue;
+};
+
+struct ComputePushConstants
+{
+	glm::vec4 data1;
+	glm::vec4 data2;
+	glm::vec4 data3;
+	glm::vec4 data4;
+};
+
+struct ComputeEffect
+{
+    const char* name;
+
+	VkPipeline pipeline;
+	VkPipelineLayout layout;
+
+	ComputePushConstants data;
 };
 
 // Double buffering so we can prepare the next frame
@@ -69,13 +88,17 @@ public:
 	VkDescriptorSetLayout _drawImageDescriptorLayout;
 
 	// Pipeline objects
-	VkPipeline _gradientPipeline;
 	VkPipelineLayout _gradientPipelineLayout;
 
 	// Immediate GPU submit objects
     VkFence _immFence;
     VkCommandBuffer _immCommandBuffer;
     VkCommandPool _immCommandPool;
+
+	// Shader effects
+	std::vector<ComputeEffect> backgroundEffects;
+	int currentBackgroundEffect{0};
+
 
     // Acts like singleton but allows up to control creation and deletion
 	static VulkanEngine& Get();
