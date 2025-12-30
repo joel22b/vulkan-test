@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vk_types.h>
+#include <deletion_queue.h>
 
 struct FrameData {
 
@@ -8,6 +9,7 @@ struct FrameData {
 	VkCommandBuffer _mainCommandBuffer;
     VkSemaphore _swapchainSemaphore;
 	VkFence _renderFence;
+	DeletionQueue _deletionQueue;
 };
 
 // Double buffering so we can prepare the next frame
@@ -23,6 +25,7 @@ public:
 	bool stop_rendering{ false };
 	VkExtent2D _windowExtent{ 1700 , 900 };
     std::shared_ptr<spdlog::logger> m_logger;
+	DeletionQueue _mainDeletionQueue;
 
     // SDL objects for window creation
 	struct SDL_Window* _window{ nullptr };
@@ -51,6 +54,13 @@ public:
 	VkQueue _graphicsQueue;
 	uint32_t _graphicsQueueFamily;
 
+	// Vulkan Memory Allocator objects
+	VmaAllocator _allocator;
+
+	// Vulkan image objects
+	AllocatedImage _drawImage;
+	VkExtent2D _drawExtent;
+
     // Acts like singleton but allows up to control creation and deletion
 	static VulkanEngine& Get();
 
@@ -62,6 +72,7 @@ public:
 
 	//draw loop
 	void draw();
+	void draw_background(VkCommandBuffer cmd);
 
 	//run main loop
 	void run();
