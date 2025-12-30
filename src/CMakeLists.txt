@@ -7,6 +7,14 @@ add_executable(vulkan-test
     ${ALL_SOURCE_FILES}
 )
 
+add_dependencies(vulkan-test
+    compile-shaders
+)
+
+target_compile_definitions(vulkan-test PUBLIC
+    -DSHADERS_PATH="${CMAKE_BINARY_DIR}/shaders/"
+)
+
 target_include_directories(vulkan-test PRIVATE 
     ${GIT_REPO_BASE}/include
     ${CMAKE_CURRENT_SOURCE_DIR}

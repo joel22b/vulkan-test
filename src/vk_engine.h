@@ -2,6 +2,7 @@
 
 #include <vk_types.h>
 #include <deletion_queue.h>
+#include <vk_descriptors.h>
 
 struct FrameData {
 
@@ -61,6 +62,16 @@ public:
 	AllocatedImage _drawImage;
 	VkExtent2D _drawExtent;
 
+	// Shader descriptor objects
+	DescriptorAllocator globalDescriptorAllocator;
+
+	VkDescriptorSet _drawImageDescriptors;
+	VkDescriptorSetLayout _drawImageDescriptorLayout;
+
+	// Pipeline objects
+	VkPipeline _gradientPipeline;
+	VkPipelineLayout _gradientPipelineLayout;
+
     // Acts like singleton but allows up to control creation and deletion
 	static VulkanEngine& Get();
 
@@ -82,7 +93,11 @@ private:
 	bool init_swapchain();
 	void init_commands();
 	void init_sync_structures();
+	void init_descriptors();
 
     bool create_swapchain(uint32_t width, uint32_t height);
 	void destroy_swapchain();
+
+	bool init_pipelines();
+	bool init_background_pipelines();
 };

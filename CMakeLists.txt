@@ -55,4 +55,5 @@ find_package(Spdlog REQUIRED)
 #######################################################
 # Add subdirectories
 #######################################################
+add_subdirectory(shaders)
 add_subdirectory(src)
