@@ -72,6 +72,11 @@ public:
 	VkPipeline _gradientPipeline;
 	VkPipelineLayout _gradientPipelineLayout;
 
+	// Immediate GPU submit objects
+    VkFence _immFence;
+    VkCommandBuffer _immCommandBuffer;
+    VkCommandPool _immCommandPool;
+
     // Acts like singleton but allows up to control creation and deletion
 	static VulkanEngine& Get();
 
@@ -84,9 +89,12 @@ public:
 	//draw loop
 	void draw();
 	void draw_background(VkCommandBuffer cmd);
+	void draw_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
 
 	//run main loop
 	void run();
+
+	void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
 
 private:
     bool init_vulkan();
@@ -94,6 +102,7 @@ private:
 	void init_commands();
 	void init_sync_structures();
 	void init_descriptors();
+	void init_imgui();
 
     bool create_swapchain(uint32_t width, uint32_t height);
 	void destroy_swapchain();
