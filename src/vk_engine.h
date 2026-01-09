@@ -99,6 +99,10 @@ public:
 	std::vector<ComputeEffect> backgroundEffects;
 	int currentBackgroundEffect{0};
 
+	// Triangle Pipeline
+	VkPipelineLayout _trianglePipelineLayout;
+	VkPipeline _trianglePipeline;
+
 
     // Acts like singleton but allows up to control creation and deletion
 	static VulkanEngine& Get();
@@ -113,6 +117,7 @@ public:
 	void draw();
 	void draw_background(VkCommandBuffer cmd);
 	void draw_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
+	void draw_geometry(VkCommandBuffer cmd);
 
 	//run main loop
 	void run();
@@ -132,4 +137,5 @@ private:
 
 	bool init_pipelines();
 	bool init_background_pipelines();
+	bool init_triangle_pipeline();
 };
