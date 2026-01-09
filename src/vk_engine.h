@@ -103,6 +103,12 @@ public:
 	VkPipelineLayout _trianglePipelineLayout;
 	VkPipeline _trianglePipeline;
 
+	// Mesh Pipeline
+	VkPipelineLayout _meshPipelineLayout;
+	VkPipeline _meshPipeline;
+
+	GPUMeshBuffers rectangle;
+
 
     // Acts like singleton but allows up to control creation and deletion
 	static VulkanEngine& Get();
@@ -131,6 +137,7 @@ private:
 	void init_sync_structures();
 	void init_descriptors();
 	void init_imgui();
+	void init_default_data();
 
     bool create_swapchain(uint32_t width, uint32_t height);
 	void destroy_swapchain();
@@ -138,4 +145,10 @@ private:
 	bool init_pipelines();
 	bool init_background_pipelines();
 	bool init_triangle_pipeline();
+	bool init_mesh_pipeline();
+
+	AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+	void destroy_buffer(const AllocatedBuffer& buffer);
+
+	GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
 };
