@@ -51,6 +51,7 @@ find_package(tinyobjloader REQUIRED)
 find_package(VkBootstrap REQUIRED)
 find_package(VulkanMemoryAllocator REQUIRED)
 find_package(Spdlog REQUIRED)
+find_package(fastgltf REQUIRED)
 
 #######################################################
 # Add subdirectories

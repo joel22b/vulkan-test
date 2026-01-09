@@ -87,7 +87,11 @@ VulkanEngine::init(std::shared_ptr<spdlog::logger> logger)
 
     init_imgui();
 
-	init_default_data();
+	if (!init_default_data())
+	{
+		m_logger->error("Failed to initialize default data");
+		return false;
+	}
 
     // everything went fine
     _isInitialized = true;
@@ -303,6 +307,14 @@ VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 	vkCmdBindIndexBuffer(cmd, rectangle.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 
 	vkCmdDrawIndexed(cmd, 6, 1, 0, 0, 0);
+
+	// Draw monkeyhead mesh
+	push_constants.vertexBuffer = testMeshes[2]->meshBuffers.vertexBufferAddress;
+
+	vkCmdPushConstants(cmd, _meshPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(GPUDrawPushConstants), &push_constants);
+	vkCmdBindIndexBuffer(cmd, testMeshes[2]->meshBuffers.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+
+	vkCmdDrawIndexed(cmd, testMeshes[2]->surfaces[0].count, 1, testMeshes[2]->surfaces[0].startIndex, 0, 0);
 
 	vkCmdEndRendering(cmd);
 }
@@ -722,7 +734,7 @@ VulkanEngine::init_imgui()
 	});
 }
 
-void
+bool
 VulkanEngine::init_default_data()
 {
     std::array<Vertex,4> rect_vertices;
@@ -754,6 +766,21 @@ VulkanEngine::init_default_data()
 		destroy_buffer(rectangle.indexBuffer);
 		destroy_buffer(rectangle.vertexBuffer);
 	});
+
+	std::string assetBasicMeshPath = ASSETS_PATH;
+    assetBasicMeshPath += "basicmesh.glb";
+	if (auto ret = loadGltfMeshes(this, assetBasicMeshPath); ret)
+	{
+		// Success
+		testMeshes = ret.value();
+	}
+	else
+	{
+		m_logger->error("Failed to load mesh data from: {}", assetBasicMeshPath);
+		return false;
+	}
+
+	return true;
 }
 
 bool

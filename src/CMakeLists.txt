@@ -13,6 +13,7 @@ add_dependencies(vulkan-test
 
 target_compile_definitions(vulkan-test PUBLIC
     -DSHADERS_PATH="${CMAKE_BINARY_DIR}/shaders/"
+    -DASSETS_PATH="${GIT_REPO_BASE}/assets/"
 )
 
 target_include_directories(vulkan-test PRIVATE 
@@ -31,4 +32,5 @@ target_link_libraries(vulkan-test PRIVATE
     GPUOpen::VulkanMemoryAllocator
     spdlog::spdlog
     ${Vulkan_LIBRARY}
+    fastgltf::fastgltf
 )

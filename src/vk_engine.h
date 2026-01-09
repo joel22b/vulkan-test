@@ -3,6 +3,7 @@
 #include <vk_types.h>
 #include <deletion_queue.h>
 #include <vk_descriptors.h>
+#include <vk_loader.h>
 
 struct FrameData
 {
@@ -108,6 +109,7 @@ public:
 	VkPipeline _meshPipeline;
 
 	GPUMeshBuffers rectangle;
+	std::vector<std::shared_ptr<MeshAsset>> testMeshes;
 
 
     // Acts like singleton but allows up to control creation and deletion
@@ -130,6 +132,8 @@ public:
 
 	void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
 
+	GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
+
 private:
     bool init_vulkan();
 	bool init_swapchain();
@@ -137,7 +141,7 @@ private:
 	void init_sync_structures();
 	void init_descriptors();
 	void init_imgui();
-	void init_default_data();
+	bool init_default_data();
 
     bool create_swapchain(uint32_t width, uint32_t height);
 	void destroy_swapchain();
@@ -149,6 +153,4 @@ private:
 
 	AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
 	void destroy_buffer(const AllocatedBuffer& buffer);
-
-	GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
 };
