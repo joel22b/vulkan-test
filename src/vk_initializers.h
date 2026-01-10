@@ -27,6 +27,8 @@ VkImageViewCreateInfo imageview_create_info(VkFormat format, VkImage image, VkIm
 
 VkRenderingAttachmentInfo attachment_info(
     VkImageView view, VkClearValue* clear ,VkImageLayout layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+VkRenderingAttachmentInfo depth_attachment_info(
+    VkImageView view, VkImageLayout layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 VkRenderingInfo rendering_info(VkExtent2D renderExtent, VkRenderingAttachmentInfo* colorAttachment,
     VkRenderingAttachmentInfo* depthAttachment);
 

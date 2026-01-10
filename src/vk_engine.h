@@ -48,6 +48,8 @@ public:
     std::shared_ptr<spdlog::logger> m_logger;
 	DeletionQueue _mainDeletionQueue;
 
+	bool loggedOnce {true};
+
     // SDL objects for window creation
 	struct SDL_Window* _window{ nullptr };
 
@@ -80,6 +82,7 @@ public:
 
 	// Vulkan image objects
 	AllocatedImage _drawImage;
+	AllocatedImage _depthImage;
 	VkExtent2D _drawExtent;
 
 	// Shader descriptor objects

@@ -110,4 +110,30 @@ struct formatter<VkPhysicalDeviceType>
     }
 };
 
+template <>
+struct formatter<glm::mat4>
+{
+    constexpr auto parse(format_parse_context& ctx)
+    { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const glm::mat4& matrix, FormatContext& ctx) const
+    {
+        std::string output {"\n"};
+
+        for (int i = 0; i < matrix.length(); i++)
+        {
+            output += "| ";
+            for (int j = 0; j < matrix[i].length(); j++)
+            {
+                output += std::to_string(matrix[i][j]);
+                output += " ";
+            }
+            output += "|\n";
+        }
+
+        return format_to(ctx.out(), "{}", output);
+    }
+};
+
 } //namespace fmt
