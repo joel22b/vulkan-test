@@ -283,7 +283,8 @@ VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 	vkCmdBeginRendering(cmd, &renderInfo);
 
 	// Triangle rendering
-	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
+	//vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
+	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _meshPipeline);
 
 	//set dynamic viewport and scissor
 	VkViewport viewport = {};
@@ -305,41 +306,47 @@ VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 	vkCmdSetScissor(cmd, 0, 1, &scissor);
 
 	//launch a draw command to draw 3 vertices
-	vkCmdDraw(cmd, 3, 1, 0, 0);
+	//vkCmdDraw(cmd, 3, 1, 0, 0);
 
 	// Mesh rendering
-	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _meshPipeline);
-
 	GPUDrawPushConstants push_constants;
-	push_constants.worldMatrix = glm::mat4{ 1.f };
+	//push_constants.worldMatrix = glm::mat4{ 1.f };
 
 	// THIS VIEW AND PROJECTION DOES NOT WORK!!
-	glm::mat4 view = glm::translate(glm::vec3{ 0,0,-5 });
+	//glm::mat4 view = glm::translate(glm::vec3{ 0,0,-5 });
+	//glm::mat4 view = glm::translate(_view) * glm::rotate();
+	glm::mat4 view = glm::rotate(glm::radians(_rotate.x), glm::vec3{ 1,0,0}) *
+					 glm::rotate(glm::radians(_rotate.y), glm::vec3{ 0,1,0}) *
+					 glm::rotate(glm::radians(_rotate.z), glm::vec3{ 0,0,1}) *
+					 glm::translate(_view);
 	// camera projection
-	glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
+	//glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 10000.f, 0.1f);
+	//glm::mat4 projection = glm::perspective(glm::radians(70.f), (float)_drawExtent.width / (float)_drawExtent.height, 0.1f, 10000.f);
+	glm::mat4 projection = glm::perspective(glm::radians(_fovy), (float)_drawExtent.width / (float)_drawExtent.height, _near, _far);
 
 	// invert the Y direction on projection matrix so that we are more similar
 	// to opengl and gltf axis
 	projection[1][1] *= -1;
-	push_constants.worldMatrix[1][1] *= -1;
+	//push_constants.worldMatrix[1][1] *= -1;
 
 	//push_constants.worldMatrix = projection * view;
+	push_constants.worldMatrix = projection * view;
 
-	if (!loggedOnce)
+	/*if (!loggedOnce)
 	{
 		loggedOnce = true;
 
 		m_logger->warn("view: {}", view);
 		m_logger->warn("projection: {}", projection);
 		m_logger->warn("worldMatrix: {}", push_constants.worldMatrix);
-	}
+	}*/
 
-	push_constants.vertexBuffer = rectangle.vertexBufferAddress;
+	/*push_constants.vertexBuffer = rectangle.vertexBufferAddress;
 
 	vkCmdPushConstants(cmd, _meshPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(GPUDrawPushConstants), &push_constants);
 	vkCmdBindIndexBuffer(cmd, rectangle.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 
-	vkCmdDrawIndexed(cmd, 6, 1, 0, 0, 0);
+	vkCmdDrawIndexed(cmd, 6, 1, 0, 0, 0);*/
 
 	// Draw monkeyhead mesh
 	push_constants.vertexBuffer = testMeshes[2]->meshBuffers.vertexBufferAddress;
@@ -409,8 +416,14 @@ VulkanEngine::run()
 		
 			ImGui::InputFloat4("data1",(float*)& selected.data.data1);
 			ImGui::InputFloat4("data2",(float*)& selected.data.data2);
-			ImGui::InputFloat4("data3",(float*)& selected.data.data3);
-			ImGui::InputFloat4("data4",(float*)& selected.data.data4);
+			//ImGui::InputFloat4("data3",(float*)& selected.data.data3);
+			//ImGui::InputFloat4("data4",(float*)& selected.data.data4);
+
+			ImGui::InputFloat3("view", (float*)&_view);
+			ImGui::InputFloat3("rotate", (float*)&_rotate);
+			ImGui::InputFloat("fovy", (float*)&_fovy);
+			ImGui::InputFloat("near", (float*)&_near);
+			ImGui::InputFloat("far", (float*)&_far);
 		}
         ImGui::End();
 
@@ -788,7 +801,7 @@ VulkanEngine::init_imgui()
 bool
 VulkanEngine::init_default_data()
 {
-    std::array<Vertex,4> rect_vertices;
+    /*std::array<Vertex,4> rect_vertices;
 
 	rect_vertices[0].position = {0.5,-0.5, 0};
 	rect_vertices[1].position = {0.5,0.5, 0};
@@ -816,7 +829,7 @@ VulkanEngine::init_default_data()
 	_mainDeletionQueue.push_function([&](){
 		destroy_buffer(rectangle.indexBuffer);
 		destroy_buffer(rectangle.vertexBuffer);
-	});
+	});*/
 
 	std::string assetBasicMeshPath = ASSETS_PATH;
     assetBasicMeshPath += "basicmesh.glb";
@@ -899,10 +912,10 @@ VulkanEngine::init_pipelines()
 	}
 
 	// Graphics Pipelines
-	if(!init_triangle_pipeline())
+	/*if(!init_triangle_pipeline())
 	{
 		return false;
-	}
+	}*/
 
 	if(!init_mesh_pipeline())
 	{
@@ -1003,7 +1016,7 @@ VulkanEngine::init_background_pipelines()
     return true;
 }
 
-bool
+/*bool
 VulkanEngine::init_triangle_pipeline()
 {
 	std::string shaderTriangleFragPath = SHADERS_PATH;
@@ -1074,7 +1087,7 @@ VulkanEngine::init_triangle_pipeline()
 
 	m_logger->info("Successfully built triangle graphics pipeline");
 	return true;
-}
+}*/
 
 bool VulkanEngine::init_mesh_pipeline()
 {

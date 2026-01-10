@@ -104,15 +104,22 @@ public:
 	int currentBackgroundEffect{0};
 
 	// Triangle Pipeline
-	VkPipelineLayout _trianglePipelineLayout;
-	VkPipeline _trianglePipeline;
+	//VkPipelineLayout _trianglePipelineLayout;
+	//VkPipeline _trianglePipeline;
 
 	// Mesh Pipeline
 	VkPipelineLayout _meshPipelineLayout;
 	VkPipeline _meshPipeline;
 
-	GPUMeshBuffers rectangle;
+	//GPUMeshBuffers rectangle;
 	std::vector<std::shared_ptr<MeshAsset>> testMeshes;
+
+	// Camera stuff
+	glm::vec3 _view { 0,0,-5 };
+	glm::vec3 _rotate { 0,0,0 };
+	float _fovy {70.f};
+	float _near{0.1f};
+	float _far{10000.f};
 
 
     // Acts like singleton but allows up to control creation and deletion
@@ -151,7 +158,7 @@ private:
 
 	bool init_pipelines();
 	bool init_background_pipelines();
-	bool init_triangle_pipeline();
+	//bool init_triangle_pipeline();
 	bool init_mesh_pipeline();
 
 	AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
